@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suki - Your Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Suki - Your Assistant</h1>
+        <div id="chatbox">
+            <div id="messages"></div>
+        </div>
+        <input type="text" id="userInput" placeholder="Type your question here..." autofocus />
+        <button id="sendButton">Send</button>
+    </div>
+    <div id="messages" aria-live="polite"></div>
+
+    <script>
+        const responses = {
+            "hello": ["Hi there!", "Hello!", "Greetings!", "Howdy!"],
+            "how are you?": ["I'm just a computer program, but thanks for asking!", "Doing well, how about you?", "I'm here to help you!"],
+            "what is your name?": ["You can call me Suki!", "My name is Suki, what is yours?"],
+            "bye": ["Goodbye!", "See you later!", "Take care!"],
+             
+        };
+
+        // Function to get a response based on user input
+        function getResponse(userInput) {
+            userInput = userInput.toLowerCase(); // Normalize input to lowercase
+            for (let key in responses) {
+                if (userInput.includes(key)) { // Check if the input includes any key from responses
+                    // Return a random response from the matching array
+                    return responses[key][Math.floor(Math.random() * responses[key].length)];
+                }
+            }
+            return "Sorry, I don't understand that."; // Default response if no match found
+        }
+
+        // Text-to-Speech function
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Event listener for the send button
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const userInput = document.getElementById('userInput').value;
+            if (!userInput) return; // Do nothing if input is empty
+
+            displayMessage(userInput, 'user'); // Display user message
+
+            const response = getResponse(userInput); // Get assistant's response
+            displayMessage(response, 'assistant'); // Display assistant's response
+            speak(response); // Read the response aloud
+            document.getElementById('userInput').value = ''; // Clear the input field
+        });
+
+        // Function to display messages in the chatbox
+        function displayMessage(message, sender) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto scroll to bottom
+        }
+    </script>
+</body>
+</html>
